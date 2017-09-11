@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -36,6 +37,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import soot.Scene;
 import soot.SootMethod;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.InfoflowConfiguration.AliasingAlgorithm;
@@ -60,6 +62,7 @@ import soot.jimple.infoflow.solver.cfg.IInfoflowCFG;
 import soot.jimple.infoflow.taintWrappers.EasyTaintWrapper;
 import soot.jimple.infoflow.taintWrappers.ITaintPropagationWrapper;
 import soot.jimple.infoflow.util.SystemClassHandler;
+import soot.jimple.toolkits.callgraph.CallGraph;
 import soot.options.Options;
 
 public class Test {
@@ -744,6 +747,9 @@ public class Test {
 			// Set configuration object
 			app.setConfig(config);
 			
+			//app.constructCallgraph(); 
+			//CallGraph cg = Scene.v().getCallGraph();
+			//cg.
 			
 			if (config.isIccEnabled())
 			{
@@ -797,6 +803,11 @@ public class Test {
 			app.addResultsAvailableHandler(new MyResultsAvailableHandler());
 			final InfoflowResults res = app.runInfoflow("SourcesAndSinks.txt");
 			System.out.println("Analysis has run for " + (System.nanoTime() - beforeRun) / 1E9 + " seconds");
+			
+			SootMethod entryPoint = app.getDummyMainMethod();
+			Options.v().set_main_class(entryPoint.getSignature());
+			Scene.v().setEntryPoints(Collections.singletonList(entryPoint));
+			System.out.println(entryPoint.getActiveBody());
 			
 			if (config.getLogSourcesAndSinks()) {
 				if (!app.getCollectedSources().isEmpty()) {
