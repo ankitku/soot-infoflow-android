@@ -13,8 +13,6 @@ import java.util.Set;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import soot.PackManager;
 import soot.PhaseOptions;
@@ -49,9 +47,9 @@ public class CFG {
 			map.put(srcSig, neighborSet );
 			
 		}
-		Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-		String json = gson.toJson(map);
-		return json;
+	//	Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+	//	String json = gson.toJson(map);
+		return "";
 	}
 	
 	public static void printCG(CallGraph cg) {
@@ -73,13 +71,13 @@ public class CFG {
                     tgtMethod.getParameterTypes().toString()
                             .replace('[', '(').replace(']', ')');
             //System.out.println(tgtMethod.getActiveBody().toString());
-
+            if(srcMethodDeclaration.contains("com.nkt") && tgtMethodDeclaration.contains("com.nkt"))
             edgeList.add(srcMethodDeclaration + " => " + tgtMethodDeclaration);
             //System.out.println(srcMethodDeclaration + " => " + tgtMethodDeclaration);
         }
         //System.out.println(applicationCallGraph.size());
         for (String edgeStr : edgeList){
-            System.out.println(edgeStr);
+            System.err.println(edgeStr);
         }
     }
 
@@ -109,7 +107,7 @@ public class CFG {
 		SootMethod entryPoint = app.getDummyMainMethod();
 		Options.v().set_main_class(entryPoint.getSignature());
 		Scene.v().setEntryPoints(Collections.singletonList(entryPoint));
-		System.out.println(entryPoint.getActiveBody());
+		//System.out.println(entryPoint.getActiveBody());
 		
 		List applicationClasses = new ArrayList<>();
 		for (SootClass cls : Scene.v().getApplicationClasses()) {
@@ -118,8 +116,8 @@ public class CFG {
       // Collections.sort(applicationClasses);
      
 
-		PackManager.v().runPacks();
-			PackManager.v().writeOutput();
+		//PackManager.v().runPacks();
+		//	PackManager.v().writeOutput();
 			
 		 appCallGraph = Scene.v().getCallGraph();
 		System.out.println("" + appCallGraph.size());
